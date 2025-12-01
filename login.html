@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Shop Location Update | WhatsApp-style Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b141a; /* WA dark chat bg */
+      --panel:#111b21; /* main panel */
+      --card:#1f2c33; /* chat header */
+      --accent:#25d366; /* WA green */
+      --muted:#8696a0; /* WA muted text */
+      --text:#e9edef; /* WA light text */
+      --text-strong:#f0f4f8;
+      --danger:#ef4444;
+      --focus: #53f392;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      background: radial-gradient(1000px 600px at 10% -10%, #202c33 0%, transparent 60%),
+                  radial-gradient(800px 500px at 100% 0%, #1b252c 0%, transparent 60%),
+                  var(--bg);
+      color: var(--text);
+    }
+    .wrap {
+      min-height: 100%;
+      display: grid;
+      place-items: center;
+      padding: 32px 16px;
+    }
+    .container {
+      width: 100%;
+      max-width: 980px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 16px;
+      align-items: stretch;
+    }
+    @media (max-width: 860px){
+      .container { grid-template-columns: 1fr; }
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid #223039;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .hero {
+      background: linear-gradient(180deg, #1f2c33, #111b21);
+      padding: 28px;
+      display: grid;
+      gap: 18px;
+      border-bottom: 1px solid #24333c;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wa-badge {
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: 10px;
+      background: #172129;
+      border: 1px solid #24333c;
+    }
+    .wa-badge svg{ width: 22px; height: 22px; }
+    h1 { font-size: 22px; margin: 0; color: var(--text-strong); }
+    p.sub { margin: 0; color: var(--muted); font-size: 14px; }
+
+    .content { padding: 24px; display: grid; gap: 18px; }
+
+    .input-group { display: grid; gap: 6px; }
+    label { font-size: 13px; color: var(--muted); }
+    .field {
+      display: flex; align-items: center; gap: 10px;
+      background: #0e171d;
+      border: 1px solid #223039;
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+    }
+    .field:focus-within { border-color: var(--focus); box-shadow: 0 0 0 3px rgba(37,211,102,0.12); }
+    .field input, .field textarea, .field select {
+      background: transparent; border: 0; outline: 0; color: inherit;
+      flex: 1; font-size: 15px; resize: vertical;
+    }
+    .hint { color: var(--muted); font-size: 12px; }
+
+    .btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      padding: 12px 16px; border-radius: 10px; border: 1px solid #2a3b44;
+      background: #162229; color: var(--text);
+      cursor: pointer; user-select: none; text-decoration: none; font-weight: 600;
+    }
+    .btn:hover { filter: brightness(1.08); }
+    .btn.primary { background: var(--accent); color: #0b141a; border-color: #27e071; }
+    .btn.ghost { background: transparent; }
+
+    .meta { padding: 16px 24px 24px; color: var(--muted); font-size: 12px; }
+    .error { color: var(--danger); font-size: 13px; display:none; }
+
+    .aside {
+      background: linear-gradient(140deg, rgba(37,211,102,0.08), rgba(37,211,102,0.02) 60%), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 100 100"><g fill="%2327333c" opacity="0.45"><circle cx="10" cy="10" r="1"/><circle cx="30" cy="20" r="1"/><circle cx="55" cy="9" r="1"/><circle cx="80" cy="40" r="1"/><circle cx="15" cy="55" r="1"/><circle cx="45" cy="70" r="1"/><circle cx="70" cy="85" r="1"/><circle cx="90" cy="60" r="1"/></g></svg>');
+      border: 1px solid #223039;
+      border-radius: 16px;
+      padding: 28px;
+      display: grid; gap: 16px; align-content: start;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    .aside h3 { margin: 0; font-size: 18px; color: var(--text-strong); }
+    .aside ul { margin: 0; padding-left: 18px; color: var(--muted); }
+    .aside li { margin: 6px 0; }
+
+    .footer-note { text-align: center; color: var(--muted); font-size: 12px; margin-top: 16px; }
+    .footer-note a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="container">
+      <section class="panel">
+        <div class="hero">
+          <div class="brand">
+            <div class="wa-badge" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M20.52 3.48A11.89 11.89 0 0 0 12.01 0C5.38 0 .02 5.36.02 11.98c0 2.11.55 4.15 1.6 5.96L0 24l6.23-1.62a12 12 0 0 0 5.78 1.47h.01c6.62 0 11.99-5.36 11.99-11.98a11.9 11.9 0 0 0-3.49-8.39Z" fill="#25D366"/>
+                <path d="M9.4 6.89c-.23-.5-.48-.51-.7-.52l-.6-.01c-.2 0-.5.07-.76.37-.26.3-1 1-1 2.44 0 1.44 1.02 2.83 1.16 3.02.14.19 2.02 3.23 4.98 4.4 2.46.97 2.96.78 3.5.73.54-.05 1.73-.71 1.98-1.4.25-.69.25-1.29.18-1.41-.07-.12-.27-.19-.56-.34-.29-.15-1.73-.86-2-.95-.26-.1-.45-.15-.64.15-.19.3-.73.95-.9 1.14-.17.2-.33.22-.61.08-.29-.15-1.2-.44-2.29-1.41-.85-.75-1.43-1.68-1.6-1.96-.17-.29-.02-.45.13-.6.13-.12.29-.33.43-.5.14-.17.19-.29.29-.48.1-.2.05-.37-.02-.52-.07-.15-.63-1.55-.88-2.12Z" fill="#111B21"/>
+              </svg>
+            </div>
+            <div>
+              <h1>Login to update shop location</h1>
+              <p class="sub">Quickly share your new address via WhatsApp after login.</p>
+            </div>
+          </div>
+        </div>
+        <form class="content" id="loginForm" autocomplete="on">
+          <div class="input-group">
+            <label for="username">Username</label>
+            <div class="field">
+              <input type="text" id="username" name="username" placeholder="Enter username" required minlength="3" />
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="password">Password</label>
+            <div class="field">
+              <input type="password" id="password" name="password" placeholder="Enter password" required minlength="6" />
+            </div>
+          </div>
+          <div class="input-group">
+            <label for="phone">Your WhatsApp number</label>
+            <div class="field">
+              <span style="color:#6ee7b7">+</span>
+              <input type="tel" id="phone" name="phone" inputmode="tel" placeholder="CountryCodePhone e.g. 15551234567" pattern="^[0-9]{6,15}$" required />
+            </div>
+            <div class="hint">Enter digits only (country code + number), no spaces or symbols.</div>
+          </div>
+          <div class="input-group">
+            <label for="address">New shop address</label>
+            <div class="field">
+              <textarea id="address" name="address" rows="3" placeholder="Street, City, State, ZIP" required></textarea>
+            </div>
+          </div>
+          <div class="error" id="errorMsg"></div>
+          <div class="btns">
+            <button type="submit" class="btn primary">Login & Send on WhatsApp</button>
+            <button type="button" id="previewBtn" class="btn ghost">Preview Message</button>
+            <button type="reset" class="btn ghost">Clear</button>
+          </div>
+          <div class="meta">Demo-only login (client-side). Replace with real auth on server if needed.</div>
+        </form>
+      </section>
+
+      <aside class="aside">
+        <h3>How it works</h3>
+        <ul>
+          <li>Enter demo credentials: username and password.</li>
+          <li>Provide your WhatsApp number and the new shop address.</li>
+          <li>On submit, it opens WhatsApp with a prefilled message to that number.</li>
+        </ul>
+        <h3>Tips</h3>
+        <ul>
+          <li>For desktop, WhatsApp Web will open. For mobile, the app opens.</li>
+          <li>Use international format for the number, digits only.</li>
+          <li>Customize the message text in the script if you like.</li>
+        </ul>
+        <div class="footer-note">Not affiliated with WhatsApp. Built for convenience. <a href="#" onclick="alert('Sample page. Replace with your own privacy policy.')">Privacy</a></div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    function encodeQuery(obj){
+      return Object.entries(obj)
+        .map(([k,v]) => encodeURIComponent(k) + '=' + encodeURIComponent(v))
+        .join('&');
+    }
+
+    function buildWhatsAppUrl(phone, message){
+      // Prefer wa.me deep link to work on both mobile and web
+      const digits = String(phone).replace(/\D+/g, '');
+      const text = encodeURIComponent(message);
+      return `https://wa.me/${digits}?text=${text}`;
+    }
+
+    function fakeLogin(username, password){
+      // Demo-only check; accept anything non-empty meeting minlength constraints
+      return username && password && username.length >= 3 && password.length >= 6;
+    }
+
+    function buildMessage(address, username){
+      const when = new Date().toLocaleString();
+      return `Hello, this is ${username || 'shop owner'}.\n\nI am updating my shop location. New address:\n${address}\n\nSent on: ${when}`;
+    }
+
+    const form = document.getElementById('loginForm');
+    const errorEl = document.getElementById('errorMsg');
+    const previewBtn = document.getElementById('previewBtn');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      errorEl.style.display = 'none';
+
+      const username = form.username.value.trim();
+      const password = form.password.value;
+      const phone = form.phone.value.trim();
+      const address = form.address.value.trim();
+
+      if(!fakeLogin(username, password)){
+        errorEl.textContent = 'Invalid login. Use at least 3 chars for username and 6 for password.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if(!/^\d{6,15}$/.test(phone)){
+        errorEl.textContent = 'Enter a valid WhatsApp number with country code (digits only).';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      if(address.length < 6){
+        errorEl.textContent = 'Please enter a more detailed address.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      const msg = buildMessage(address, username);
+      const url = buildWhatsAppUrl(phone, msg);
+      window.location.href = url;
+    });
+
+    previewBtn.addEventListener('click', () => {
+      const username = form.username.value.trim();
+      const address = form.address.value.trim();
+      const msg = buildMessage(address || '[your new address]', username);
+      alert(msg);
+    });
+  </script>
+</body>
+</html>
